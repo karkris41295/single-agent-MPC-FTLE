@@ -1,3 +1,1 @@
-# Codebase for paper 'Finite-Horizon, Energy-Optimal Trajectories in Unsteady Flows'
-
-Hello
+# 'Finite-Horizon, Energy-Optimal Trajectories in Unsteady Flows' code
