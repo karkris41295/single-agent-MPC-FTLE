@@ -1,1 +1,1 @@
-# 'Finite-Horizon, Energy-Optimal Trajectories in Unsteady Flows' code
+# Visualizing Nonlinear Model Predictive Control over FTLE
