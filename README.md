@@ -1,1 +1,1 @@
-# Visualizing Nonlinear Model Predictive Control over FTLE
+# Finite-Horizon, Energy-Optimal Trajectories in Unsteady Flows
