@@ -3,10 +3,10 @@ import mpctools as mpc
 import matplotlib.pyplot as plt
 import numpy as np
 
-# %% Load LCS Data
-recall = np.load('ftle_th15.npz')
-data = [recall[key] for key in recall]
-x0, y0, solfor, solbac = data
+# # %% Load LCS Data
+# recall = np.load('ftle_th15.npz')
+# data = [recall[key] for key in recall]
+# x0, y0, solfor, solbac = data
 
 # %% Paramteters from Shadden Physica D
 A = .1
@@ -220,46 +220,46 @@ particle, = ax.plot([], [], marker='o', linewidth = 0, color='white', markersize
 fortraj, = ax.plot([],[], alpha=1, linestyle = '--')
 plt.tight_layout()
 
-# def doublegyreVEC(t, yin, A, eps, om):
-#     x = yin[0]
-#     y = yin[1]
+def doublegyreVEC(t, yin, A, eps, om):
+    x = yin[0]
+    y = yin[1]
 
-#     u = np.zeros(x.shape); 
-#     v = u.copy()
+    u = np.zeros(x.shape); 
+    v = u.copy()
 
-#     a = eps * np.sin(om * t);
-#     b = 1 - 2 * a;
+    a = eps * np.sin(om * t);
+    b = 1 - 2 * a;
     
-#     f = a * x**2 + b * x;
-#     df = 2 * a * x + b;
+    f = a * x**2 + b * x;
+    df = 2 * a * x + b;
 
-#     u = -np.pi * A * np.sin(np.pi * f) * np.cos(np.pi * y);
-#     v =  np.pi * A * np.cos(np.pi * f) * np.sin(np.pi * y) * df;
+    u = -np.pi * A * np.sin(np.pi * f) * np.cos(np.pi * y);
+    v =  np.pi * A * np.cos(np.pi * f) * np.sin(np.pi * y) * df;
 
-#     return np.array([u,v])
+    return np.array([u,v])
 
-# dx = .1
-# xvec = np.arange(0-dx, 2+dx, dx)
-# yvec = np.arange(0-dx, 1+dx, dx)
+dx = .1
+xvec = np.arange(0-dx, 2+dx, dx)
+yvec = np.arange(0-dx, 1+dx, dx)
 
-# x0, y0 = np.meshgrid(xvec, yvec)
-# yIC = np.zeros((2, len(yvec), len(xvec)))
-# yIC[0], yIC[1] = x0, y0
+x0, y0 = np.meshgrid(xvec, yvec)
+yIC = np.zeros((2, len(yvec), len(xvec)))
+yIC[0], yIC[1] = x0, y0
 
 
-# dy = doublegyreVEC(0,yIC,A,eps,omega)
-#qui = ax.quiver(x0, y0, dy[0], dy[1], color = 'grey')
+dy = doublegyreVEC(0,yIC,A,eps,omega)
+qui = ax.quiver(x0, y0, dy[0], dy[1], color = 'grey')
 
 def update(num,Q):
-    #t_snap = Delta*num
-    ax.collections = []
-    ax.contour(x0, y0, solfor[num], origin = 'lower', cmap = 'winter', alpha = 1)
-    ax.contour(x0, y0, solbac[num], origin = 'lower', cmap = 'autumn', alpha = 1)
+    t_snap = Delta*num
+    #ax.collections = []
+    #ax.contour(x0, y0, solfor[num], origin = 'lower', cmap = 'winter', alpha = 1)
+    #ax.contour(x0, y0, solbac[num], origin = 'lower', cmap = 'autumn', alpha = 1)
 
-    # dy = doublegyreVEC(t_snap,yIC,A,eps,omega)
-    # Q.set_UVC(dy[0], dy[1])
+    dy = doublegyreVEC(t_snap,yIC,A,eps,omega)
+    Q.set_UVC(dy[0], dy[1])
     
-    num = num*2
+    #num = num*2
     particle1.set_data(times[num], en_segment[num])
     traj1.set_data(times[:num+1],en_segment[:num+1]) 
     particle2.set_data(times[num], er_segment[num])
@@ -280,9 +280,9 @@ def update(num,Q):
     
     #traj.set_data(x[:num+1, 0],x[:num+1, 1])
     
-#anim = animation.FuncAnimation(fig, update, fargs=(qui,),interval=100, blit=False, repeat_delay = 10)
+anim = animation.FuncAnimation(fig, update, fargs=(qui,),interval=100, blit=False, repeat_delay = 10)
     
-anim = animation.FuncAnimation(fig, update, fargs=(1,),interval=100, blit=False, repeat_delay = 10)
+#anim = animation.FuncAnimation(fig, update, fargs=(1,),interval=100, blit=False, repeat_delay = 10)
 # %% Plotting color energy
 '''
 from matplotlib import animation
