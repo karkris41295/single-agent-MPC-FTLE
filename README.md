@@ -1,1 +1,1 @@
-# Finite-Horizon, Energy-Optimal Trajectories in Unsteady Flows
+# Energy Optimal Trajectories in Unsteady Flows
