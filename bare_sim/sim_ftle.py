@@ -1,7 +1,12 @@
-#Plotting results and running MPC for Double Gyre
+#Running MPC for Double Gyre (with FTLE in the background) *use this if you have the FTLE file!*
 import mpctools as mpc
 import matplotlib.pyplot as plt
 import numpy as np
+
+# %% Load LCS Data *create an FTLE field file and insert the filename here*
+recall = np.load('ftle_th15.npz')
+data = [recall[key] for key in recall]
+x0, y0, solfor, solbac = data
 
 # %% Paramteters from Shadden Physica D
 A = .1
@@ -70,7 +75,7 @@ N = {"x":Nx, "u":Nu, "t":Nt}
 solver = mpc.nmpc(f=ode_rk4_casadi, N=N, l=l, Pf = Pf, x0=xi, lb=lb, ub=ub,verbosity=0)
 #solver = mpc.nmpc(f=ode_rk4_casadi, N=N, l=l, x0=xi, lb=lb, ub=ub,verbosity=0)
 # %% Now simulate.
-Nsim = 400
+Nsim = 800
 times = Delta*Nsim*np.linspace(0,1,Nsim+1)
 x = np.zeros((Nsim+1,Nx))
 x[0,:] = xi
@@ -121,7 +126,7 @@ for i in upred:
 
 upred3 = np.array(upred3)[:,:,:,0]
 
-#%% Plot with vector field
+#%% Plot with FTLE field
 
 from matplotlib import cm
 from matplotlib import animation
@@ -159,46 +164,18 @@ traj4, = ax3.plot([],[], color='green', alpha=0.6)
 
 particle, = ax.plot([], [], marker='o', linewidth = 0, color='white', markersize = '8')
 
-#fortraj, = ax.plot([],[], color='cyan', alpha=1, linestyle = '--') # forward trajectory
-fortraj, = ax.plot([],[], alpha=1, linestyle = '--')
+#fortraj, = ax.plot([],[], color='cyan', alpha=1, linestyle = '--') # forward trajectory single color
+fortraj, = ax.plot([],[], alpha=1, linestyle = '--') # colored by energy
 plt.tight_layout()
 
-def doublegyreVEC(t, yin, A, eps, om):
-    x = yin[0]
-    y = yin[1]
-
-    u = np.zeros(x.shape); 
-    v = u.copy()
-
-    a = eps * np.sin(om * t);
-    b = 1 - 2 * a;
-    
-    f = a * x**2 + b * x;
-    df = 2 * a * x + b;
-
-    u = -np.pi * A * np.sin(np.pi * f) * np.cos(np.pi * y);
-    v =  np.pi * A * np.cos(np.pi * f) * np.sin(np.pi * y) * df;
-
-    return np.array([u,v])
-
-dx = .1
-xvec = np.arange(0-dx, 2+dx, dx)
-yvec = np.arange(0-dx, 1+dx, dx)
-
-x0, y0 = np.meshgrid(xvec, yvec)
-yIC = np.zeros((2, len(yvec), len(xvec)))
-yIC[0], yIC[1] = x0, y0
-
-
-dy = doublegyreVEC(0,yIC,A,eps,omega)
-qui = ax.quiver(x0, y0, dy[0], dy[1], color = 'grey')
 
 def update(num,Q):
-    t_snap = Delta*num
 
-    dy = doublegyreVEC(t_snap,yIC,A,eps,omega)
-    Q.set_UVC(dy[0], dy[1])
-    
+    ax.collections = []
+    ax.contour(x0, y0, solfor[num], origin = 'lower', cmap = 'winter', alpha = 1)
+    ax.contour(x0, y0, solbac[num], origin = 'lower', cmap = 'autumn', alpha = 1)
+
+    num = num*2
     particle1.set_data(times[num], en_segment[num])
     traj1.set_data(times[:num+1],en_segment[:num+1]) 
     particle2.set_data(times[num], er_segment[num])
@@ -218,5 +195,5 @@ def update(num,Q):
     particle.set_data(pred3[num,0,0], pred3[num,0,1])
     
     #traj.set_data(x[:num+1, 0],x[:num+1, 1])
-    
-anim = animation.FuncAnimation(fig, update, fargs=(qui,),interval=100, blit=False, repeat_delay = 10)
+
+anim = animation.FuncAnimation(fig, update, fargs=(1,),interval=100, blit=False, repeat_delay = 10)
